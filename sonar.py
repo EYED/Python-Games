@@ -28,31 +28,32 @@ Written with Python 2.6.5
 
 """
 
-#===============================================================================|
-#                                                                               |
-#   Imports                                                                     |
-#                                                                               |
-#===============================================================================|
+#==============================================================================|
+#                                                                              |
+#   Imports                                                                    |
+#                                                                              |
+#==============================================================================|
 
 import sys
 import random
 
-#===============================================================================|
-#                                                                               |
-# function createXYBoard()                                                      |
-#   this function is used to make a multidimensional list that will be used to  |
-#   have x,y coordinates in the sonar game we call it xyBoard because in a later|
-#   function we create a copy of the board for printing easier printing of the  |
-#   board. we first use a range to append 60 lists to the list xyBoard. this    |
-#   will be our x axis. then we use a range to append random charachters to the |
-#   new list withing the list that we just created. this will be the y axis.    |
-# arguments:                                                                    |
-#   none                                                                        |
-# returns:                                                                      |
-#   the list of lists xyBoard which is used to do all the calculations in       |
-#       game.                                                                   |
-#                                                                               |
-#===============================================================================|
+#==============================================================================|
+#                                                                              |
+# function createXYBoard()                                                     |
+#   this function is used to make a multidimensional list that will be used to |
+#   have x,y coordinates in the sonar game we call it xyBoard because in a     |
+#   later function we create a copy of the board for printing easier printing  |
+#   of the board. we first use a range to append 60 lists to the list xyBoard. |
+#   this will be our x axis. then we use a range to append random charachters  |
+#   to the new list withing the list that we just created. this will be the y  |
+#   axis.                                                                      |
+# arguments:                                                                   |
+#   none                                                                       |
+# returns:                                                                     |
+#   the list of lists xyBoard which is used to do all the calculations in      |
+#       game.                                                                  |
+#                                                                              |
+#==============================================================================|
 
 def createXYBoard(xyBoard):
     for x in range(60):
@@ -63,22 +64,22 @@ def createXYBoard(xyBoard):
             else:
                 xyBoard[x].append("`")
 
-#===============================================================================|
-#                                                                               |
-# function printBoard(xyBoard)                                                  |
-#   this function is used to print out the board in a nice ascii style layout.  |
-#   we do this by using variables to do a while loop through the xyBoard and    |
-#   adding each rows charachter to a new list called pBoard (printing Board)    |
-#   afterwich we create and print the string for the tens column and then print |
-#   the ones collum. after that we print from a range the horizontal lines from |
-#   the pBoard                                                                  |
-# arguments:                                                                    |
-#   xyBoard is the list of lists used to create the list that will print the    |
-#       board for feedback to the player.                                       |
-# returns:                                                                      |
-#   nothing :D                                                                  |
-#                                                                               |
-#===============================================================================|
+#==============================================================================|
+#                                                                              |
+# function printBoard(xyBoard)                                                 |
+#   this function is used to print out the board in a nice ascii style layout. |
+#   we do this by using variables to do a while loop through the xyBoard and   |
+#   adding each rows charachter to a new list called pBoard (printing Board)   |
+#   afterwich we create and print the string for the tens column and then print|
+#   the ones collum. after that we print from a range the horizontal lines from|
+#   the pBoard                                                                 |
+# arguments:                                                                   |
+#   xyBoard is the list of lists used to create the list that will print the   |
+#       board for feedback to the player.                                      |
+# returns:                                                                     |
+#   nothing :D                                                                 |
+#                                                                              |
+#==============================================================================|
 
 def printBoard(xyBoard):
     y = 0
@@ -103,20 +104,20 @@ def printBoard(xyBoard):
     print "   " + ("0123456789"*6)
     print tens
 
-#===============================================================================|
-#                                                                               |
-# function again()                                                              |
-#   function for getting if the player wants to play again                      |
-#   arguments:                                                                  |
-#       none                                                                    |
-#   returns:                                                                    |
-#       true or false depending on player input                                 |
-#   *special note*                                                              |
-#       even though you don't need the "is True" part of:                       |
-#           if again.lower().startswith("y" is True and len(again) < 4          |
-#       i left it there for easier reading by the coder                         |
-#                                                                               |
-#===============================================================================|
+#==============================================================================|
+#                                                                              |
+# function again()                                                             |
+#   function for getting if the player wants to play again                     |
+#   arguments:                                                                 |
+#       none                                                                   |
+#   returns:                                                                   |
+#       true or false depending on player input                                |
+#   *special note*                                                             |
+#       even though you don't need the "is True" part of:                      |
+#           if again.lower().startswith("y" is True and len(again) < 4         |
+#       i left it there for easier reading by the coder                        |
+#                                                                              |
+#==============================================================================|
 
 def goAgain():
     again = raw_input("Play again? (yes or no)>").lower()
@@ -125,17 +126,17 @@ def goAgain():
     else:
         return False
 
-#===============================================================================|
-#                                                                               |
-# function playerMove ( xyBoard , chests , sonar )                              |
-#   function for getting the players move and then placing it on the board with |
-#   the number of the closest chest.                                            |
-# arguments:                                                                    |
-#   xyBoard is the game board that tells the player whats goin on               |
-#   chests is the coordinates of where the chests are                           |
-#   sonar is the number of devices that you have                                |
-#                                                                               |
-#===============================================================================|
+#==============================================================================|
+#                                                                              |
+# function playerMove ( xyBoard , chests , sonar )                             |
+#   function for getting the players move and then placing it on the board with|
+#   the number of the closest chest.                                           |
+# arguments:                                                                   |
+#   xyBoard is the game board that tells the player whats goin on              |
+#   chests is the coordinates of where the chests are                          |
+#   sonar is the number of devices that you have                               |
+#                                                                              |
+#==============================================================================|
 
 def playerMove(xyBoard,chests,sonar,moveList):
     print """Pick the place that you want to place your sonar device. Use the format:
@@ -153,18 +154,18 @@ X Y ,where X is a number between 0 and 59 and Y is a number between 0 and 14."""
     sonar -= 1
     return sonar
 
-#===============================================================================|
-#                                                                               |
-# function getChests ( xyBoard , chests )                                       |
-#   function designed to randomly place three chests into the chests list       |
-# arguments:                                                                    |
-#   xyBoard is the list that contains what the board looks like. Chests must be |
-#       within the limits of this board                                         |
-#   chests is the list that contains the coordinates of the chests. since it is |
-#       a list and lists are considered global by python i can modify the       |
-#       argument chests to modify chests as a whole                             |
-#                                                                               |
-#===============================================================================|
+#==============================================================================|
+#                                                                              |
+# function getChests ( xyBoard , chests )                                      |
+#   function designed to randomly place three chests into the chests list      |
+# arguments:                                                                   |
+#   xyBoard is the list that contains what the board looks like. Chests must be|
+#       within the limits of this board                                        |
+#   chests is the list that contains the coordinates of the chests. since it is|
+#       a list and lists are considered global by python i can modify the      |
+#       argument chests to modify chests as a whole                            |
+#                                                                              |
+#==============================================================================|
     
 def getChests(xyBoard,chests):#randomly gets the coordinates for three chests
     chests.remove[1]
@@ -173,15 +174,15 @@ def getChests(xyBoard,chests):#randomly gets the coordinates for three chests
         yChest = random.randint( 0 , len ( xyBoard [0] ) )
         chests.append( [xChest,yChest,0] )
 
-#===============================================================================|
-#                                                                               |
-# function validMove ( move )                                                   |
-#   this function is desik if the players move is something that    |
-#   falls withing the border of the game board                                  |
-# arguments:                                                                    |
-#   move is the players move created from playersMove function                  |
-#                                                                               |
-#===============================================================================|
+#==============================================================================|
+#                                                                              |
+# function validMove ( move )                                                  |
+#   this function is desik if the players move is something that               |
+#   falls withing the border of the game board                                 |
+# arguments:                                                                   |
+#   move is the players move created from playersMove function                 |
+#                                                                              |
+#==============================================================================|
 
 def validMove(move):
     if (move[0].isdigit() and move[1].isdigit()) and (int(move[0]) < 60 and int(move[1]) < 15):
@@ -189,11 +190,11 @@ def validMove(move):
     else:
         return False
 
-#===============================================================================|
-#                                                                               |
+#==============================================================================|
+#                                                                              |
 # gets the info on the droped sonar and gives it the appropriate number
-#                                                                               |
-#===============================================================================|
+#                                                                              |
+#==============================================================================|
 
 def numericSonar(xyBoard,chests,move,moveList):
     moveList.append(move)
@@ -223,19 +224,19 @@ def numericSonar(xyBoard,chests,move,moveList):
         print "Sorry Captain, no chests in range..."
         xyBoard[move[0]][move[1]] = 0
 
-#===============================================================================|
-#                                                                               |
+#==============================================================================|
+#                                                                              |
 #
-#                                                                               |
-#===============================================================================|
+#                                                                              |
+#==============================================================================|
 
 def updateChests(xyBoard,chests,moveList):
 
-#===============================================================================|
-#                                                                               |
+#==============================================================================|
+#                                                                              |
 #
-#                                                                               |
-#===============================================================================|
+#                                                                              |
+#==============================================================================|
 
 again = True
 if raw_input("Sonar!\nSee instructions? (yes or no)>").lower().startswith("y") is True:
