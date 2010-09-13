@@ -114,7 +114,7 @@ def printBoard(xyBoard):
 #       true or false depending on player input                                |
 #   *special note*                                                             |
 #       even though you don't need the "is True" part of:                      |
-#           if again.lower().startswith("y" is True and len(again) < 4         |
+#           if again.startswith("y") is True and len(again) < 4                |
 #       i left it there for easier reading by the coder                        |
 #                                                                              |
 #==============================================================================|
@@ -139,10 +139,11 @@ def goAgain():
 #==============================================================================|
 
 def playerMove(xyBoard,chests,sonar,moveList):
+    print "You have %s more chest(s) to go..." %(len(chests))
     print """Pick the place that you want to place your sonar device. Use the format:
 X Y ,where X is a number between 0 and 59 and Y is a number between 0 and 14."""
     move = raw_input("Where would you like to place your sonar device?>").split(" ")
-    if move == "quit":
+    if move[0] == "quit":
         print "Thanks for looking, Captain."
         sys.exit()
     if not validMove(move):
@@ -199,7 +200,7 @@ def validMove(move):
 def numericSonar(xyBoard,chests,move,moveList):
     moveList.append(move)
     holder = []
-    # this partchecks if your move
+    # this partchecks if your move is on a chest, then gives you the chest
     for check in chests:
         if check == move:
             chests.remove(move)
@@ -213,6 +214,8 @@ def numericSonar(xyBoard,chests,move,moveList):
         cY = chests[len(holder)][1]
         holder.append ( [ abs(cX - move[0]), abs(cY - move[1]) ] )
     if min(min(holder) ) < 10:
+        # this checks if the sonar is within range of a chest and then puts that
+        # number on the xyBoard for player feed back
         chests[chests.index(min(holder)][2] += 1
         xyBoard[move[0]][move[1]] = min(min(holder))
         if chests[chests.index(min(holder)][2] == 3:
@@ -226,15 +229,46 @@ def numericSonar(xyBoard,chests,move,moveList):
 
 #==============================================================================|
 #                                                                              |
-#
+# function updateChests ( xyBoard , chests , moveList )                        |
+#   this functions purpose is to update the three chests with information on   |
+#   how close each sonar device is and marking the chest with an addition to   |
+#   the variable that keeps track of how many sonar devices are within a range |
+#   of 9. in the event that there are three sonar devices within 9 of a chest, |
+#   that chest is then "aquired" by the player.                                |
+# arguments:                                                                   |
+#   xyBoard is the sea board that the player looks at for feed back. this needs|
+#       to be updated with the new numbers on each sonar device.               |
+#   chests is the list that contains the xy coordinates of each chest and is   |
+#       used to compare against moveList                                       |
+#   moveList is a list of the xy coordinates that the player has placed on the |
+#       board.                                                                 |
 #                                                                              |
 #==============================================================================|
 
 def updateChests(xyBoard,chests,moveList):
+    if len(chests) != 0:
+        for temp in chests:
+            cX = temp[0]
+            cY = temp[1]
+            for temp2 in moveList:
+                if abs(cX - temp2[0]) > 10 or abs(cY - temp2[1]) > 10:
+                    holder = []
+                    holder.append(abs(cX - temp2[0]),abs(cY - temp2[1]))
+                    xyBoard[temp2[0]][temp2[1]] = min(holder)
+                    chests[chests.index(temp)][2] += 1
+                if temp[2] >= 3:
+                    chests.remove(temp)
+                    print "You found a chest! %s more to go!" %(len(chests))
+                    updateChests(xyBoard,chests,moveList)
+            if len(chests) == 0
+                break
+            else:
+                continue
 
 #==============================================================================|
 #                                                                              |
-#
+# the main control loop of the game where the computer asks you to play again  |
+#   and the variables a set/reset                                              |
 #                                                                              |
 #==============================================================================|
 
@@ -283,9 +317,9 @@ Press enter to coninue...
     print"""
 You can quit anytime there is input prompt by typing quit. Good luck captain.
 """
-moveList = []
 while again is True:
     sonarDevices = 16
+    moveList = []
     chests = [1]
     board = []
     createXYBoard(board)
