@@ -26,6 +26,13 @@ up to 9 squares away from where the player places it. ie where D is the sonar:
 
 Written with Python 2.6.5
 
+Though there is no difficulty slider in this, it would be to difficult. Instead
+of having a set number for the distance a sonar device can see, you would use a
+variable set to one of three numbers based on how hard the player wants it to
+be. ie hard: 4      normal: 7       easy: 9
+i picked these numbers based on how many times ive played and how you can
+completely cover the board with the sonar devices and still have enough left
+over to have a very high chance of picking up all three chests.
 """
 
 #==============================================================================|
@@ -48,10 +55,10 @@ import random
 #   to the new list withing the list that we just created. this will be the y  |
 #   axis.                                                                      |
 # arguments:                                                                   |
-#   none                                                                       |
+#   xyBoard is the list that will be turned into the main feedback information |
+#       for the player                                                         |
 # returns:                                                                     |
-#   the list of lists xyBoard which is used to do all the calculations in      |
-#       game.                                                                  |
+#   nothing                                                                    |
 #                                                                              |
 #==============================================================================|
 
@@ -164,11 +171,13 @@ X Y ,where X is a number between 0 and 59 and Y is a number between 0 and 14."""
 #       within the limits of this board                                        |
 #   chests is the list that contains the coordinates of the chests. since it is|
 #       a list and lists are considered global by python i can modify the      |
-#       argument chests to modify chests as a whole                            |
+#       argument chests to modify chests as a whole. it will also have a number|
+#       that indicates how many sonar devices are within range of the chest so |
+#       the computer knows when a chest is supposed to be picked up.           |
 #                                                                              |
 #==============================================================================|
     
-def getChests(xyBoard,chests):#randomly gets the coordinates for three chests
+def getChests(xyBoard,chests):
     while len(chests) < 3:
         xChest = random.randint( 0 , len ( xyBoard ) )
         yChest = random.randint( 0 , len ( xyBoard [0] ) )
@@ -181,18 +190,33 @@ def getChests(xyBoard,chests):#randomly gets the coordinates for three chests
 #   falls withing the border of the game board                                 |
 # arguments:                                                                   |
 #   move is the players move created from playersMove function                 |
+# returns:                                                                     |
+#   returns true if the move is within the board                               |
+#   else it returns fals                                                       |
 #                                                                              |
 #==============================================================================|
 
 def validMove(move):
     if (move[0].isdigit() and move[1].isdigit()) and (int(move[0]) < 60 and int(move[1]) < 15):
+        # This part makes sure that move is numbers    while this one makes sure its in the board
         return True
     else:
         return False
 
 #==============================================================================|
 #                                                                              |
-# gets the info on the droped sonar and gives it the appropriate number
+# function numericSonar ( xyBoard , chests , move , moveList )                 |
+#   this function is what will add your move to the board with the correct     |
+#   feedback information so that you will be able to intelligently add the next|
+#   sonar device. It also calls forth the updateChests function in the case of |
+#   finding a chest when you place a sonar device.                             |
+# arguments:                                                                   |
+#   xyBoard is the list that is used as the information feedback board. It is  |
+#      printed to the screen with the numbers of how far away a chest is       |
+#   chests is the xy coordinates list of where all three chests are.           |
+#   move is the xy coordinates of where the player wants to drop a sonar device|
+#   moveList is a list of all previous moves done by the player. It is used to |
+#       update the sonar feedback on the xyBoard in the updateChests function  |
 #                                                                              |
 #==============================================================================|
 
@@ -219,9 +243,10 @@ def numericSonar(xyBoard,chests,move,moveList):
         xyBoard[move[0]][move[1]] = str(min(min(holder)))
         if chests[holder.index(min(holder))][2] == 3:
             temp = chests[holder.index(min(holder))]
+            # have to make a temp variable to remove the chest from its list
             chests.remove(temp)
-            updateChests(xyBoard,chests,moveList)
             print "You found a chest! %s more to go!" %(len(chests))
+            updateChests(xyBoard,chests,moveList)
     elif min(min(holder) ) >= 10:
         print "Sorry Captain, no chests in range..."
         xyBoard[move[0]][move[1]] = "0"
@@ -246,24 +271,39 @@ def numericSonar(xyBoard,chests,move,moveList):
 
 def updateChests(xyBoard,chests,moveList):
     for temp in chests:
-        cX = temp[0]
-        cY = temp[1]
-        for temporary in moveList:
-            if len(chests) == 0:
-                continue
-            if abs(cX - temporary[0]) < 10 or abs(cY - temporary[1]) < 10:
-                holder = []
-                holder.append(abs(cX - temporary[0]))
-                holder.append(abs(cY - temporary[1]))
-                xyBoard[temporary[0]][temporary[1]] = str(min(holder))
-                chests[chests.index(temp)][2] += 1
-            else:
-                xyBoard[temporary[0]][temporary[1]] = "0"
-            if temp[2] >= 3:
-                chests.remove(temp)
-                xyBoard[temporary[0]][temporary[1]] = "0"
-                print "You found a chest! %s more to go!" %( len(chests) )
-                updateChests(xyBoard,chests,moveList)
+        # this makes all the chests number of sonar devices connected to it 0
+        # so that each is equally updated. This insures that there are no
+        # duplicate within range sonar devices.
+        temp[2] = 0
+    if len(chests) != 0:
+    # this insures that this is only run if there are chests to run it on
+        for temp in chests:
+            # use a for loop to make sure that every chest is check and not one
+            cX = temp[0]
+            cY = temp[1]
+            for temporary in moveList:
+                if len(chests) == 0:
+                    # if there was only one chest and the first sonar device
+                    # picked it up then don't do anything
+                    continue
+                if abs(cX - temporary[0]) < 10 or abs(cY - temporary[1]) < 10:
+                    holder = []
+                    holder.append(abs(cX - temporary[0]))
+                    holder.append(abs(cY - temporary[1]))
+                    xyBoard[temporary[0]][temporary[1]] = str(min(holder))
+                    chests[chests.index(temp)][2] += 1
+                else:
+                    # if there are no chests within range set the sonar to 0
+                    xyBoard[temporary[0]][temporary[1]] = "0"
+                if temp[2] >= 3:
+                    # if the chest has three updated sonar devices within range
+                    # then remove it and update xyBoard with that info. tell
+                    # the player that they got the chest and call updateChests
+                    # again.
+                    chests.remove(temp)
+                    xyBoard[temporary[0]][temporary[1]] = "0"
+                    print "You found a chest! %s more to go!" %( len(chests) )
+                    updateChests(xyBoard,chests,moveList)
     if len(chests) == 0:
         for temporary in moveList:
             xyBoard[temporary[0]][temporary[1]] = "0"
@@ -325,9 +365,13 @@ while again is True:
     moveList = []
     chests = []
     board = []
+    # if the player decides to play again the above variables are rest. they
+    # are kept safe by the while loop that is nested within this while loop
     createXYBoard(board)
     getChests(board,chests)
     while sonarDevices > 0 and len(chests) > 0:
+        # this is the main loop of the game and is loop until the player looses
+        # or wins
         printBoard(board)
         sonarDevices = playerMove(board,chests,sonarDevices,moveList)
     if len(chests) == 0:
